@@ -25,6 +25,20 @@ cd /home/ec2-user
 wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install
 sudo chmod +x ./install
 sudo ./install auto
+sudo yum install -y nginx
+echo "server {
+    listen 80;
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}" | sudo tee /etc/nginx/conf.d/port_forwarding.conf
+sudo service nginx start
+sudo chkconfig nginx on
 ```
 
 Check if CodeDeploy agent is running:
